@@ -6,13 +6,13 @@ public class Example
 	public static void main(String[] args)
 	{
 		System.out.println("DEMO 1:");
-		Stream.of("word", "hello", "dude", "word and word2", "stackoverflow", "question", "ask", "word", "example")
+		Stream.of("word", "hello", "dude", "word", "and word2", "stackoverflow", "question", "ask", "word", "example")
 			.sequential()
 			.collect(SequenceSplitCollector.forStrings("word", true, false))
 			.forEach(list -> System.out.println("  " + list.toString()));
 		
 		System.out.println("DEMO 2:");
-		Stream.of("word", "hello", "dude", "Word and word2", "stackoverflow", "question", "ask", "WORD", "example")
+		Stream.of("word", "hello", "dude", "Word", "and word2", "stackoverflow", "question", "ask", "WORD", "example")
 			.parallel()
 			.collect(SequenceSplitCollector.forStrings("word", false, true))
 			.forEach(list -> System.out.println("  " + list.toString()));
