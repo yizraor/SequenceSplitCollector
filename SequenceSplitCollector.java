@@ -107,10 +107,10 @@ public final class SequenceSplitCollector
 		return forStrings(splitter, exclude_splitter, ignore_case, ArrayList<String>::new);
 	}
 	
-	public static<K extends Collection<? super String>> Collector<String, ?, List<K>> forStrings(String splitter, boolean exclude_splitter, boolean ignore_case, Supplier<K> collection_supplier)
+	public static<K extends Collection<? super String>> Collector<String, ?, List<K>> forStrings(String splitter, boolean exclude_splitter, boolean ignore_case, Supplier<K> inner_collection_supplier)
 	{
 		Objects.requireNonNull(splitter, "'splitter' must not be null");
-		Objects.requireNonNull(collection_supplier, "'collection_supplier' must not be null");
+		Objects.requireNonNull(inner_collection_supplier, "'inner_collection_supplier' must not be null");
 		
 		if ( splitter.length() == 0 )
 			throw new IllegalArgumentException("'splitter' must not be empty");
@@ -120,6 +120,6 @@ public final class SequenceSplitCollector
 			s -> s.equalsIgnoreCase(splitter) :
 			s -> s.equals(splitter);
 		
-		return of(split_detector, exclude_splitter, collection_supplier, ArrayList<K>::new);
+		return of(split_detector, exclude_splitter, inner_collection_supplier, ArrayList<K>::new);
 	}
 }
