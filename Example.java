@@ -14,13 +14,12 @@ public class Example
 		System.out.println("DEMO 2:");
 		Stream.of("word", "hello", "dude", "Word and word2", "stackoverflow", "question", "ask", "WORD", "example")
 			.parallel()
-			.collect(SequenceSplitCollector.forStrings("word", true, false))
+			.collect(SequenceSplitCollector.forStrings("word", false, true))
 			.forEach(list -> System.out.println("  " + list.toString()));
 		
 		System.out.println("DEMO 3:");
-		Stream.of("word", "hello", "dude", "Word and word2", "stackoverflow", "question", "ask", "WORD", "example")
-			.parallel()
-			.collect(SequenceSplitCollector.forStrings("word", false, true))
+		Stream.of("The", "first", "sentence.", "And", "the", "second", "sentence.", "Finally", "the", "last", "sentence.")
+			.collect(SequenceSplitCollector.of(s -> Character.isUpperCase(s.charAt(0)), false))
 			.forEach(list -> System.out.println("  " + list.toString()));
 		
 		System.out.println("DEMO 4:");
