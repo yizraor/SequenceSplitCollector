@@ -12,9 +12,9 @@ public class Example
 			.forEach(list -> System.out.println("  " + list.toString()));
 		
 		System.out.println("DEMO 2:");
-		Stream.of("word", "hello", "dude", "Word", "and word2", "stackoverflow", "question", "ask", "WORD", "example")
+		Stream.of("word", "hello", "dude", "Word and word2", "stackoverflow", "question", "ask", "WORD", "example")
 			.parallel()
-			.collect(SequenceSplitCollector.forStrings("word", false, true))
+			.collect(SequenceSplitCollector.of(s -> s.toLowerCase().startsWith("word"), false))
 			.forEach(list -> System.out.println("  " + list.toString()));
 		
 		System.out.println("DEMO 3:");
