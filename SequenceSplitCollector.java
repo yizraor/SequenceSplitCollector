@@ -3,9 +3,9 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Contains implementation for Collector that split input stream into several subsequences.<br>
- * The algorythm checks each input stream element to determine whether it is starting point of new subsequence or not.
- * Each subsequence found being saved to separate 'inner' collection object.<br>
+ * Contains implementation for {@link java.util.stream.Collector} that split input stream into several subsequences.<br>
+ * The algorithm checks each input stream element to determine whether it is starting point of new subsequence or not.
+ * Each subsequence being saved to separate 'inner' collection object.<br>
  * When input stream is fully processed, this implementation forms the 'outer' collection from all subsequences found.<br>
  * <br>
  * <h3>Example 1</h3><br>
@@ -26,7 +26,7 @@ import java.util.stream.*;
  * <h3>Example 2</h3><br>
  * Code:<br>
  *	<code>Stream.of(":", "first", "subsequence", ": this is", "second", "subsequence", ":", "the", "last", "subsequence")<br>
- *		.collect(SequenceSplitCollector.forStrings(":", true, false, SequenceSplitCollector.StrCompMethod.STARTS_FROM_SPLITTER))<br>
+		.collect(SequenceSplitCollector.forStrings(":", true, false, SequenceSplitCollector.StringComparison.STARTS_FROM_SPLITTER))<br>
  *		.forEach(list -&gt; System.out.println(list.toString()));<br></code>
  * Output:<br>
  * <code>	[first, subsequence]<br>
@@ -127,7 +127,7 @@ public final class SequenceSplitCollector
 		/**
 		 * Constructs and returns the resulting data object.<br>
 		 * Finishes the input stream processing.
-		 * @return collection of parameter type 'L'
+		 * @return resulting 'outer' collection
 		 */
 		public L getResults()
 		{
@@ -143,8 +143,9 @@ public final class SequenceSplitCollector
 	}
 	
 	/**
-	 * The simplest form of constructor for desired Collector.<br>
-	 * Gathers each subsequence into List&lt;T&gt;, and then forms List&lt;List&lt;T&gt;&gt; from all subsequences found.
+	 * The simplest form of constructor for desired {@link java.util.stream.Collector}.<br>
+	 * Gathers each subsequence into {@link java.util.List}&lt;T&gt;, and then forms List&lt;List&lt;T&gt;&gt; from all subsequences found.
+	 * 
 	 * @param <T> is type of input stream elements
 	 * @param split_detector is function that determines the starting point for new subsequence
 	 * @param exclude_splitter when 'true': elements that start new subsequence will not be included into resulting data
@@ -157,7 +158,7 @@ public final class SequenceSplitCollector
 	}
 	
 	/**
-	 * Constructs the Collector object that gather resulting subsequences to List&lt;Collection&lt;T&gt;&gt; using the supplied constructor for 'inner' Collection.
+	 * Constructs the {@link java.util.stream.Collector} object that gather resulting subsequences to {@link java.util.List}&lt;{@link java.util.Collection}&lt;T&gt;&gt; using the supplied constructor for 'inner' Collection.
 	 * @param <T> is type of input stream elements
 	 * @param <K> is type of resulting 'inner' collection
 	 * @param split_detector is function that determines the starting point for new subsequence
@@ -172,7 +173,7 @@ public final class SequenceSplitCollector
 	}
 	
 	/**
-	 * The most parameterized constructor for creation of desired Collector.
+	 * The most parameterized constructor for creation of desired {@link java.util.stream.Collector}.
 	 * @param <T> is type of input stream elements
 	 * @param <K> is type of resulting 'inner' collection
 	 * @param <L> is type of resulting 'outer' collection
@@ -199,9 +200,9 @@ public final class SequenceSplitCollector
 	}
 	
 	/**
-	 * Describes the string comparison methods used by forStrings() methods
+	 * Describes the string comparison kinds used by {@link SequenceSplitCollector}::forStrings() methods
 	 */
-	public enum StrCompMethod
+	public enum StringComparison
 	{
 		/**
 		 * Each string from input stream compared with 'splitter' by equality
@@ -223,9 +224,9 @@ public final class SequenceSplitCollector
 	
 	/**
 	 * The simplest version of forStrings().<br>
-	 * Works for Stream&lt;String&gt;.<br>
+	 * Works for {@link java.util.stream.Stream}&lt;String&gt;.<br>
 	 * Compares each input element with 'splitter' <i>by equality</i> in order of detecting the new subsequences.<br>
-	 * Gathers each subsequence into List&lt;String&gt;, and then forms List&lt;List&lt;String&gt;&gt; consisting of all subsequences found.
+	 * Gathers each subsequence into {@link java.util.List}&lt;String&gt;, and then forms List&lt;List&lt;String&gt;&gt; consisting of all subsequences found.
 	 * @param splitter is string value that starts new subsequence
 	 * @param exclude_splitter when 'true': elements that start new subsequence will not be included into resulting data
 	 * @param ignore_case when 'true': strings compared without case sensitivity
@@ -234,63 +235,63 @@ public final class SequenceSplitCollector
 	 */
 	public static Collector<String, ?, List<List<String>>> forStrings(String splitter, boolean exclude_splitter, boolean ignore_case)
 	{
-		return forStrings(splitter, exclude_splitter, ignore_case, StrCompMethod.EQUALITY, ArrayList<String>::new, ArrayList<List<String>>::new);
+		return forStrings(splitter, exclude_splitter, ignore_case, StringComparison.EQUALITY, ArrayList<String>::new, ArrayList<List<String>>::new);
 	}
 	
 	/**
 	 * The simple version of forStrings().<br>
-	 * Works for Stream&lt;String&gt;.<br>
+	 * Works for {@link java.util.stream.Stream}&lt;String&gt;.<br>
 	 * Compares each input element with 'splitter' in order of detecting the new subsequences.<br>
-	 * Gathers each subsequence into List&lt;String&gt;, and then forms List&lt;List&lt;String&gt;&gt; from all subsequences found.
+	 * Gathers each subsequence into {@link java.util.List}&lt;String&gt;, and then forms List&lt;List&lt;String&gt;&gt; from all subsequences found.
 	 * @param splitter is string value that starts new subsequence
 	 * @param exclude_splitter when 'true': elements that start new subsequence will not be included into resulting data
 	 * @param ignore_case when 'true': strings compared without case sensitivity
-	 * @param comp_method is method for string comparison
+	 * @param comparison is kind of string comparison
 	 * @return new Collector object
-	 * @see StrCompMethod
+	 * @see SequenceSplitCollector.StringComparison
 	 * @see java.util.stream.Collector
 	 */
-	public static Collector<String, ?, List<List<String>>> forStrings(String splitter, boolean exclude_splitter, boolean ignore_case, StrCompMethod comp_method)
+	public static Collector<String, ?, List<List<String>>> forStrings(String splitter, boolean exclude_splitter, boolean ignore_case, StringComparison comparison)
 	{
-		return forStrings(splitter, exclude_splitter, ignore_case, comp_method, ArrayList<String>::new, ArrayList<List<String>>::new);
+		return forStrings(splitter, exclude_splitter, ignore_case, comparison, ArrayList<String>::new, ArrayList<List<String>>::new);
 	}
 	
 	/**
-	 * Constructs Collector that gathers resulting subsequences to List&lt;Collection&lt;String&gt;&gt; using the supplied constructor for 'inner' collection.<br>
-	 * Works for Stream&lt;String&gt;.<br>
+	 * Constructs {@link java.util.stream.Collector} that gathers resulting subsequences to {@link java.util.List}&lt;{@link java.util.Collection}&lt;String&gt;&gt; using the supplied constructor for 'inner' Collection.<br>
+	 * Works for {@link java.util.stream.Stream}&lt;String&gt;.<br>
 	 * Compares each input element with 'splitter' in order of detecting the new subsequences.
 	 * @param <K> is type of resulting 'inner' collection
 	 * @param splitter is string value that starts new subsequence
 	 * @param exclude_splitter when 'true': elements that start new subsequence will not be included into resulting data
 	 * @param ignore_case when 'true': strings compared without case sensitivity
-	 * @param comp_method is method for string comparison
+	 * @param comparison is kind of string comparison
 	 * @param inner_collection_supplier is function that creates new instance for resulting 'inner' collection
 	 * @return new Collector object
-	 * @see StrCompMethod
+	 * @see SequenceSplitCollector.StringComparison
 	 * @see java.util.stream.Collector
 	 */
-	public static<K extends Collection<? super String>> Collector<String, ?, List<K>> forStrings(String splitter, boolean exclude_splitter, boolean ignore_case, StrCompMethod comp_method, Supplier<K> inner_collection_supplier)
+	public static<K extends Collection<? super String>> Collector<String, ?, List<K>> forStrings(String splitter, boolean exclude_splitter, boolean ignore_case, StringComparison comparison, Supplier<K> inner_collection_supplier)
 	{
-		return forStrings(splitter, exclude_splitter, ignore_case, comp_method, inner_collection_supplier, ArrayList<K>::new);
+		return forStrings(splitter, exclude_splitter, ignore_case, comparison, inner_collection_supplier, ArrayList<K>::new);
 	}
 	
 	/**
 	 * The most parameterized version of forStrings().<br>
-	 * Works for Stream&lt;String&gt;.<br>
+	 * Works for {@link java.util.stream.Stream}&lt;String&gt;.<br>
 	 * Compares each input element with 'splitter' in order of detecting the new subsequences.
 	 * @param <K> is type of resulting 'inner' collection
 	 * @param <L> is type of resulting 'outer' collection
 	 * @param splitter is string value that starts new subsequence
 	 * @param exclude_splitter when 'true': elements that start new subsequence will not be included into resulting data
 	 * @param ignore_case when 'true': strings compared withoud case sensitivity
-	 * @param comp_method is method for string comparison
+	 * @param comparison is kind of string comparison
 	 * @param inner_collection_supplier is function that creates new instance for resulting 'inner' collection
 	 * @param outer_collection_supplier is function that creates new instance for resulting 'outer' collection
 	 * @return new Collector object
-	 * @see StrCompMethod
+	 * @see SequenceSplitCollector.StringComparison
 	 * @see java.util.stream.Collector
 	 */
-	public static<K extends Collection<? super String>, L extends List<K>> Collector<String, ?, L> forStrings(String splitter, boolean exclude_splitter, boolean ignore_case, StrCompMethod comp_method, Supplier<K> inner_collection_supplier, Supplier<L> outer_collection_supplier)
+	public static<K extends Collection<? super String>, L extends List<K>> Collector<String, ?, L> forStrings(String splitter, boolean exclude_splitter, boolean ignore_case, StringComparison comparison, Supplier<K> inner_collection_supplier, Supplier<L> outer_collection_supplier)
 	{
 		Objects.requireNonNull(splitter, "'splitter' must not be null");
 		Objects.requireNonNull(inner_collection_supplier, "'inner_collection_supplier' must not be null");
@@ -302,7 +303,7 @@ public final class SequenceSplitCollector
 		String splitter_upcase = splitter.toUpperCase();
 		Function<String, Boolean> split_detector;
 		
-		switch ( comp_method )
+		switch ( comparison )
 		{
 			case EQUALITY:
 				split_detector =
@@ -328,7 +329,7 @@ public final class SequenceSplitCollector
 					s -> s.toUpperCase().contains(splitter_upcase) :
 					s -> s.contains(splitter);
 			default:
-				throw new IllegalArgumentException("'comp_method' value is unknown");
+				throw new IllegalArgumentException("'comparison' value is unknown");
 		}
 		
 		return of(split_detector, exclude_splitter, inner_collection_supplier, outer_collection_supplier);
